@@ -1,0 +1,586 @@
+/* © 2015 Lewis Hunt */
+
+/* A responsive AngularJS VOD prototype with additive/subtractive custom filters and sorts on 1000+ items  */
+
+
+body {
+	background-color: #f2f2f2;
+	height:100%; 
+	width:100%;
+	-webkit-font-smoothing: subpixel-antialiased;
+}
+
+input[type="search"] {
+  width:100%;
+}
+
+input[type="search"]::-webkit-search-cancel-button {
+  -webkit-appearance: searchfield-cancel-button;
+  background-color:white;
+}
+
+/* fonts */
+
+@font-face {
+	font-family: SourceSansPro;
+	src: url('../fonts/source-sans-pro/SourceSansPro-Regular.otf');
+}
+
+@font-face {
+	font-family: SourceSansPro;
+	src: url('../fonts/source-sans-pro/SourceSansPro-Light.otf');
+	font-weight: 300;
+}
+
+@font-face {
+	font-family: SourceSansPro;
+	src: url('../fonts/source-sans-pro/SourceSansPro-Bold.otf');
+	font-weight: bold;
+}
+
+@font-face {
+	font-family: SourceSansPro;
+	src: url('../fonts/source-sans-pro/SourceSansPro-It.otf');
+	font-style: italic;
+}
+
+.font-store-title {
+  font-family: SourceSansPro, sans-serif; 
+  font-size: 15px;
+  font-weight: bold;
+  color:#557ebb;
+  padding:20px 15px;
+}
+
+.nav a, body {
+  font-family: SourceSansPro, sans-serif; 
+  font-size: 15px;
+  color:#202020;
+}
+
+.font-italic {
+  font-family: SourceSansPro, sans-serif; 
+  font-size: 15px;
+  font-style: italic;
+  color:#a3a3a3;
+}
+
+
+.nav-header-container { 
+	background: linear-gradient(#282c30, #32383e);
+	height:60px;
+}
+
+.nav-header { 
+	position:absolute;
+	top:0px; left:0; right:0;
+	background: linear-gradient(#282c30, #32383e);
+	width: 100%;
+	height:60px;
+	z-index:99;
+	margin: 0 auto;
+    max-width:960px;
+    min-width:320px;
+}
+
+.nav-header-left { 
+	position:absolute;
+	left:15px;
+	line-height:60px;
+}
+
+
+.nav-header-center > a  {
+	display:block;
+	width: 200px;
+	margin:0 auto;
+	height:100%;
+	line-height:60px;
+}
+
+.nav-header-center > a:after {
+	/* symbol for "opening" panels */
+	font-family: 'Glyphicons Halflings'; 
+	font-size:14px;
+	content:"\e252";
+	color: #fa6605;
+	display:block;
+	margin-top:-41px;
+}
+
+.nav-header-right{ 
+	position:absolute;
+	right:15px;
+	margin-top:-60px;
+	line-height:60px;
+}
+
+.nav-header a, .primary-nav a, .primary-nav label, .input-keyword { 
+	color:#fff;
+	text-decoration:none;
+	text-align:center;	
+	font-size: 20px;
+	font-weight: 300;
+	
+}
+
+a.disabled {
+   pointer-events: none;
+   cursor: default;
+   color: #999;
+}
+
+.primary-nav label, .input-keyword { 	
+	font-size: 16px;	
+}
+
+
+.primary-nav {
+	width: 70%;
+	min-width:250px;
+	max-width:400px;
+	overflow:hidden;
+	margin: -1000px auto;
+	border: 1px; 
+	-webkit-box-shadow: 0px 5px 4px 0px #444;
+	box-shadow: 0px 5px 4px 0px #444;
+	background-color:#232a31;
+	z-index:1;	
+	opacity:0.97;
+	border-radius: 0.8em;
+}
+
+.primary-nav.position {
+	margin-top:-60px;
+}
+
+
+.primary-nav-header {
+	width:100%;
+	height:60px;
+}
+
+
+.content-cover.show {
+	visibility: visible;
+}
+
+.content-cover.hide {
+	visibility: hidden;
+}
+
+
+.content-cover {
+	position:absolute;
+	width:100%;
+	visibility: hidden;
+	background: rgba(0,0,0,0.4);
+	top:60px; bottom:0; left:0px; right:0px;
+}
+
+
+/* main content area */
+
+.main-content {
+	position:absolute; 
+	top:60px; bottom:60px; left:0px; right:0px; 
+	overflow:auto;
+	margin: 0;
+	margin-bottom:4px;
+	-webkit-overflow-scrolling: touch;
+}
+.main-content > div {
+	margin: 0 auto;
+	padding:10px 15px;
+    max-width:980px;
+    min-width:320px;
+}
+
+.main-content .no-results-message {
+	position:absolute;
+	width:100%;
+	max-width:100%;
+	text-align:center;
+	
+}
+
+.main-content .no-results-message a {
+	color:#fa6605;
+	cursor: pointer;
+}
+
+a.list-group-item:hover, a.list-group-item:focus, a.list-group-item:link {
+	background-color: white;
+}
+
+.list-group-item {
+	padding: 7px 10px;
+}
+
+.list-group-item > span {
+	position:absolute;
+	top:0;left:70px;bottom:0;right:0;
+	margin:0 10px 2px 2px;
+}
+
+.list-group-item p, .list-group-item h4 {
+	white-space: nowrap; 
+	text-overflow: ellipsis;
+	overflow:hidden;
+	margin:5px 50px 2px 4px;
+}
+
+img.thumb {
+	width:50px;
+	height:50px;
+	border-radius: 6px;
+}
+
+img.fav {
+	width:14px;
+	height:20px;
+}
+
+h4.tag {
+	line-height:20px;
+	font-size:17px;
+}
+
+p.name, p.comment, p.date {
+	line-height:16px;
+	font-size:14px;
+	color:#666;
+	margin-top:0;
+}
+
+p.name {
+}
+
+p.comment {
+	margin-right:107px;
+	font-size:12px;
+	color:#aaa;
+}
+
+p.date {
+	position:absolute; 
+	right:0;bottom:0;
+	margin-right:0;
+	text-align:right;
+	font-size:12px;
+}
+
+img.fav {
+	position:absolute; 
+	right:0;top:0;
+}
+
+
+/* custom footer */
+
+.nav-footer-custom {
+	position:absolute; 
+	bottom:0px; left:0px; right:0px;
+	height:64px; 
+	overflow:hidden;
+	background: linear-gradient(#e0e0e0, #dfdfdf);
+	border-top: 1px #a9a9a9 solid;
+}
+
+.nav-footer-custom ul {
+    display: flex;
+    justify-content: space-between;
+    height: 64px;
+    width: 100%;
+    max-width:600px;
+    min-width:320px;
+    margin: 0 auto;
+    padding: 0;
+    text-align: center;
+}
+.nav-footer-custom  li {
+    list-style-type: none;
+    height: 64px;
+    width: 20%;
+    white-space: nowrap;
+    color:#929292;
+    font-size: 13px;
+}
+.nav-footer-custom li a {
+	display: block;
+    background-size: 60px 60px;
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-image: url("../img/icon-1.png");   
+    padding-top:40px;
+    color:#929292;
+    height: 62px;
+    text-decoration: none;
+}
+
+.nav-footer-custom li a:hover, .nav-footer-custom li a.selected  {
+	color:#fa6605;
+}
+
+
+/* override Bootstrap styles for accordion nav inside .primary-nav div */ 
+
+#accordion {
+	font-size:12px;
+	color:#fff;
+	text-align:center;
+	z-index:2;
+	margin-bottom:10px;
+
+}
+
+/* beginning to customize scrollbar for non-mobile devices */
+		
+@media only screen and (min-device-width : 800px)  {
+
+	#accordion::-webkit-scrollbar {
+		background-color:rgba(0,0,0,0.3);
+		width: 12px;
+	}
+
+	#accordion::-webkit-scrollbar-track {
+		-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3); 
+		border-radius: 10px;
+	}
+
+	#accordion::-webkit-scrollbar-thumb {
+		border-radius: 10px;
+		background-color:rgba(65,77,88,1);
+		-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.5); 
+	}
+
+}
+
+
+/* this max-height will get updated dynamically based on screen size so we scroll at screen-height */ 
+#accordion.scrollable {
+	overflow:auto;
+}
+
+#accordion .panel {
+	background-color:transparent;
+}
+
+#accordion .panel > a:after {
+	/* symbol for "opening" panels */
+	font-family: 'Glyphicons Halflings'; 
+	content:"\e259";
+	float: right;
+	color: #fff;
+	margin-top:-29px;
+}
+#accordion .panel > a.collapsed:after {
+	/* symbol for "collapsed" panels */
+	content: "\e258";
+	color: #888;
+}
+
+#accordion a {
+	padding:14px;
+	color:#fff;
+	background-color: #232a31;
+	-moz-box-shadow: inset 0 -1px 1px rgba(0,0,0,0.5),
+					 inset 0 1px 1px rgba(255,255,255,0.3); 	
+	-webkit-box-shadow: inset 0 -1px 1px rgba(0,0,0,0.5),
+						inset 0 1px 1px rgba(255,255,255,0.3); 
+	box-shadow: inset 0 -1px 1px rgba(0,0,0,0.5),
+				inset 0 1px 1px rgba(255,255,255,0.3);
+}
+
+#accordion small {
+	display:block;
+	white-space: nowrap; 
+	text-overflow: ellipsis;
+	overflow:hidden;
+	font-size:12px;
+	color:#777;
+	margin: -4px 25px -8px 25px;
+}
+
+
+#accordion a:hover  {
+	background-color:rgba(65,77,88,0.4);
+}
+#accordion a:not(.collapsed)  {
+	background-color:rgba(65,77,88,1);
+}
+#accordion a:not(.collapsed) small  {
+	color:#ddd;
+}
+
+
+#accordion ul, #accordion div.nav-stacked {
+	padding:8px 0 10px 0;
+}
+
+/* #accordion .nav-stacked>li+li */
+#accordion li.panel {
+	margin: 0;
+}
+
+/* not yet sure if we want an inner scroll */ 
+/*
+#accordion li.panel > div > div  {
+	overflow:auto;
+	max-height:280px;
+	
+}
+*/
+#accordion li.panel.noborder {
+	border: none;
+	box-shadow: none;
+}
+#accordion li.panel.noborder > .panel-heading {
+	border: 1px solid #191c1f;
+	border-radius: 0;
+}
+
+/* filter option buttons */
+
+.nav-stacked label {
+    width:100%;
+    margin:0;
+}
+
+.nav-stacked label span, div.input-keyword {
+    display:block;
+	margin:6px 25px;
+	padding:8px 15px;
+	border: 1px solid #2f383f; 
+	color:#fff;
+}
+
+.nav-stacked label span:hover {
+    background-color:rgba(65,77,88,0.3);
+    border-color: #414d58;
+    color:#fff;
+    cursor: pointer;
+}
+
+.nav-stacked label input {
+    position:absolute;
+    left:-40px;
+}
+
+.nav-stacked label input:checked + span {
+    /*border: 1px #fa6605 solid; */
+    background:#414d58;
+    border-color: #eee;
+}
+
+.input-keyword-div {
+	background-color:rgba(65,77,88,0.3);
+	margin:20px 25px;
+	padding:4px 15px;
+	border: 1px solid #2f383f; 
+}
+
+.input-keyword-div-highlight {
+	background-color:#414d58;
+	border-color: #eee;
+}
+
+.input-keyword {
+	background-color:transparent;
+	text-align:center;
+	margin:0 auto;
+	border:0;
+	outline:0px !important;
+}
+
+
+.input-date {
+	background-color:#414d58;
+	width:35%;
+	border:1px #fff solid;
+	margin:5px 0;
+}
+.spacer {
+	display:inline-block;
+	width:10%;
+	margin-top:15px;
+}
+.start-date {
+	float:left;
+	margin-left:25px;
+}
+.end-date {
+	float:right;
+	margin-right:25px;
+}
+
+
+/*
+  ANGULAR ANIMATION
+*/
+/*
+  We're using CSS transitions for when
+  the enter and move events are triggered
+  for the element that has the .repeated-item
+  class
+*/
+.repeated-item.ng-enter, .repeated-item.ng-move {
+  -webkit-transition:0.2s linear all;
+  -moz-transition:0.2s linear all;
+  -o-transition:0.2s linear all;
+  transition:0.2s linear all;
+  opacity:0;
+}
+
+/*
+ The ng-enter-active and ng-move-active
+ are where the transition destination properties
+ are set so that the animation knows what to
+ animate.
+*/
+.repeated-item.ng-enter.ng-enter-active,
+.repeated-item.ng-move.ng-move-active {
+  opacity:1;
+}
+
+/*
+  We're using CSS keyframe animations for when
+  the leave event is triggered for the element
+  that has the .repeated-item class
+*/
+.repeated-item.ng-leave {
+  -webkit-animation:0.2s my_animation;
+  -moz-animation:0.2s my_animation;
+  -o-animation:0.2s my_animation;
+  animation:0.2s my_animation;
+}
+
+@keyframes my_animation {
+  from { opacity:1; }
+  to { opacity:0; }
+}
+
+/*
+  Unfortunately each browser vendor requires
+  its own definition of keyframe animation code...
+*/
+@-webkit-keyframes my_animation {
+  from { opacity:1; }
+  to { opacity:0; }
+}
+
+@-moz-keyframes my_animation {
+  from { opacity:1; }
+  to { opacity:0; }
+}
+
+@-o-keyframes my_animation {
+  from { opacity:1; }
+  to { opacity:0; }
+}
+
+/*
+  END ANIMATION
+*/
+
+

@@ -1,0 +1,216 @@
+<!-- © 2015 Lewis Hunt -->
+
+<!-- A responsive AngularJS VOD prototype with additive/subtractive custom filters and sorts on 1000+ items -->
+
+<!DOCTYPE html>
+
+<html ng-app="video-library">
+
+	<head>
+		<title>AngularJS - Video Library - Filtering Prototype</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		
+		<!-- Angular / Bootstrap CSS Dependencies -->
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+		
+		<link rel="stylesheet" href="css/animate.css">
+
+		<link rel="stylesheet" type="text/css" href="css/style.css" />
+			
+		<style>
+			[ng\:cloak], [ng-cloak], .ng-cloak {
+				display: none !important;
+			}
+		</style>
+		
+	</head>
+  
+	<body ng-controller="MainCtrl" id="body">
+
+
+		<div class="nav-header-container">
+		
+			<div class="nav-header">
+			
+				<span class="nav-header-left">
+					<a id="clear-all-button" ng-cloak href="" ng-show="showMenu" ng-click="clearAllFilters();">Clear All</a>
+					<a href="" class="disabled" ng-hide="showMenu"></a>
+				</span>
+				<span class="nav-header-center"><a href="" ng-click="showMenu = !showMenu; resetLimitScrollTop();">Filter Videos</a></span>
+				<span class="nav-header-right">
+					<a ng-cloak href="" ng-show="showMenu" ng-click="showMenu = false">Done</a>
+					<a href="" class="disabled" ng-hide="showMenu"></a>
+				</span>
+				
+			</div>	
+			
+		</div>	
+	
+		
+
+		<div class="main-content" ng-cloak>
+	
+				<div class="no-results-message">No results found<br/><br/>Adjust your filters or <a ng-click="clearAllFilters()">clear all filters</a></div>
+				
+				<div class="list-group" infinite-scroll-container="'.main-content'" infinite-scroll="increaseLimit()" infinite-scroll-distance="0" infinite-scroll-parent="true">
+				
+					<a href="#" class="list-group-item" ng-repeat="data in list | orderBy:search.predicate:reverse | customFilter:search:'favorite' | customFilter:search:'tag' | customFilter:search:'name' | customFilter:search:'team' | dateFilter:search.startDate:search.endDate:search.dateOption | filter:search.keyword | limitTo:limit">
+			
+							<img class="thumb" ng-src="img/{{data.picture}}" alt="image">
+					
+							<span>
+									<h4 class="tag">{{data.tag}}</h4>
+									<p class="name">{{data.name}}</p>
+									<p class="comment">{{data.team}} team | {{data.comment}}</p>
+									<p class="date">{{data.date | date:'longDate'}}</p>
+									<img class="fav" ng-src="img/{{data.favorite}}.png" alt="fav">
+							</span>									
+
+					</a>
+					
+					<!--<div style='clear: both;'></div>-->
+					
+					
+				</div>
+					
+
+		</div>
+
+
+		<!-- footer -->	
+		<div class="nav-footer-custom">	
+
+				<ul>
+					<li><a href="#" class="selected" style="background-image: url('img/icon-1.png');">Videos</a></li>
+					<li><a href="#" style="background-image: url('img/icon-2.png')">Community</a></li>
+					<li><a href="#" style="background-image: url('img/icon-3.png')">&nbsp;</a></li>
+					<li><a href="#" style="background-image: url('img/icon-4.png')">Team</a></li>
+					<li><a href="#" style="background-image: url('img/icon-5.png')">Profile</a></li>
+				</ul>
+
+		</div> 
+		
+		
+	     <div class="content-cover" ng-click="showMenu=!showMenu" ng-class="{true: 'show animated fadeIn',false: 'animated fadeOut hide' }[showMenu]"></div>   
+	
+		
+		<nav class="primary-nav" ng-class="{true: 'animated bounceInDown position',false: 'animated bounceOutUp position' }[showMenu]">
+
+			<div class="primary-nav-header">
+
+			</div>
+			
+				<div class="input-keyword-div">
+					<input type="search" class="input-keyword" ng-model="search.keyword" placeholder="Refine By Keyword..."/>
+				</div>	
+
+			<ul id="accordion" class="nav scrollable">	
+
+				<li class="panel noborder"> <a data-toggle="collapse" class="collapsed" data-parent="#accordion" href="#firstCategory">Sort<small>&nbsp;by {{search.predicate}}</small></a>
+
+					<div id="firstCategory" class="collapse">
+		
+						<div class="nav nav-stacked">
+						
+							<label><input type="radio" ng-click="order(true)" ng-model="search.predicate" value="date" hidden><span>Video Date</span></label>
+							<label><input type="radio" ng-click="order(false)" ng-model="search.predicate" value="name" hidden><span>Athlete Name</span></label>
+							<label><input type="radio" ng-click="order(false)" ng-model="search.predicate" value="tag" hidden><span>Technique Tag</span></label>
+									
+						</div>			
+
+					</div>
+
+				</li>
+
+				<li class="panel noborder"> <a data-toggle="collapse" class="collapsed" data-parent="#accordion" href="#secondCategory">Techniques<small>&nbsp;{{search.tag.join(', ')}}<!--{{search.tag.length>0 && search.tag.join(', ') || 'all'}}--></small></a>
+
+					<div id="secondCategory" class="collapse">
+
+						<div class="nav nav-stacked">
+						
+							<label ng-repeat="tag in tags">
+							  <input type="checkbox" checklist-model="search.tag" checklist-value="tag" hidden><span>{{tag}}</span>
+							</label>	
+
+						</div>
+
+					</div>
+
+				</li>
+
+				<li class="panel noborder"> <a data-toggle="collapse" class="collapsed" data-parent="#accordion" href="#thirdCategory">Date Range<small>&nbsp;{{search.dateLabel}}<!--{{search.dateLabel!='' && search.dateLabel || 'all'}}--></small></a>
+
+					<div id="thirdCategory" class="collapse">
+
+						<div class="nav nav-stacked">
+
+							<label ng-repeat="dateOption in dateOptions">
+							  <input type="checkbox" ng-click="resetDateOptions($index)" ng-model="dateOption.checked" ng-value="dateOption.value" hidden><span>{{dateOption.label}}</span>
+							</label>
+
+						</div>
+
+					</div>
+
+				</li>
+			
+
+				<li class="panel noborder"> <a data-toggle="collapse" class="collapsed" data-parent="#accordion" href="#forthCategory">Athletes<small>&nbsp;{{search.name.join(', ')}}<!--{{search.name.length>0 && search.name.join(', ') || 'all'}}--></small></a>
+
+					<div id="forthCategory" class="collapse">
+
+						<div class="nav nav-stacked">
+						
+							<label ng-repeat="name in names">
+							  <input type="checkbox" checklist-model="search.name" checklist-value="name" hidden><span>{{name}}</span>
+							</label>	
+
+						</div>
+
+					</div>
+				</li>
+				
+				<li class="panel noborder"> <a data-toggle="collapse" class="collapsed" data-parent="#accordion" href="#fifthCategory">Teams<small>&nbsp;{{search.team.join(', ')}}<!--{{search.name.length>0 && search.name.join(', ') || 'all'}}--></small></a>
+
+					<div id="fifthCategory" class="collapse">
+
+						<div class="nav nav-stacked">
+						
+							<label ng-repeat="team in teams">
+							  <input type="checkbox" checklist-model="search.team" checklist-value="team" hidden><span>{{team}}</span>
+							</label>	
+
+						</div>
+
+					</div>
+				</li>	
+								
+				<div class="nav nav-stacked">
+					<label>					   
+					  <input type="checkbox" checklist-model="search.favorite" checklist-value="true" hidden><span>View Favorites Only</span>
+					</label>	
+				</div>	
+
+			</ul> 
+			
+
+		</nav> 	
+
+		<!-- Angular / Bootstrap / JQuery JS Dependencies on bottom of page to reduce initial load time -->
+		<script src="https://code.jquery.com/jquery-1.11.2.min.js"></script>
+		
+		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.7/angular.min.js"></script>
+		
+		<script data-require="lodash.js@*" data-semver="2.4.1" src="http://cdnjs.cloudflare.com/ajax/libs/lodash.js/2.4.1/lodash.min.js"></script>
+		<script src="js/checklist-model.js"></script>	
+		<script type='text/javascript' src='js/ng-infinite-scroll.v1.1.2.js'></script>
+
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>	
+		
+		<!-- Controller -->	
+		<script src="js/app.js"></script>	
+    	<!-- Data -->
+		<script src="js/videos.js"></script>
+	
+	</body>
+</html>
