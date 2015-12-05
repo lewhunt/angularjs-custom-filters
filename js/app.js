@@ -35,20 +35,20 @@ app.controller('MainCtrl', ['videos', '$scope', function(videos, $scope) {
 	};
 	
 	$scope.resetLimitScrollTop = function(){
-	
+		/*
 		resetPopupSize();
 		$scope.limit = 100;
 		angular.element(".main-content").scrollTop(0);
+		*/
 		
-		/*
 		setTimeout(function () {
 			$scope.$apply(function () {
 				resetPopupSize();
 				$scope.limit = 100;
 				angular.element(".main-content").scrollTop(0);
 			});
-		}, 100);
-		*/
+		}, 10);
+		
 		
 	};
 	
