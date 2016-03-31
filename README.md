@@ -2,3 +2,8 @@
 A mobile-responsive AngularJS VOD prototype with additive/subtractive custom filters and sorts on 1000+ items.
 
 Demo: http://lewhunt.github.io/angularjs-custom-filters
+
+## Example
+Screengrab showing filter app UX in mobile format
+
+![Example](img/filters-grab.gif)
