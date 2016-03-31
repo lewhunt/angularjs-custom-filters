@@ -4,6 +4,6 @@ A mobile-responsive AngularJS VOD prototype with additive/subtractive custom fil
 Demo: http://lewhunt.github.io/angularjs-custom-filters
 
 ## Example
-Screengrab showing filter app UX in mobile format
+Screengrab shows the application filtering UX in mobile format
 
 ![Example](img/filters-grab.gif)
