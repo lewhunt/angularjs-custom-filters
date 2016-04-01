@@ -6,4 +6,4 @@ Demo: http://lewhunt.github.io/angularjs-custom-filters
 ## Example
 Screengrab below shows the filtering UX in mobile format
 
-![Example](img/filters-grab.gif)
+![Example](img/filtering-grab.gif)
