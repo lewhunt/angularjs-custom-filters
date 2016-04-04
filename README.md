@@ -1,9 +1,8 @@
 # AngularJS Custom Filters for Video Listings
 A mobile-responsive AngularJS VOD prototype with additive/subtractive custom filters and sorts on 1000+ items.
 
-Demo: http://lewhunt.github.io/angularjs-custom-filters
+![Demo](img/filtering-grab.gif)
 
-## Example
-Screengrab below shows the filtering UX in mobile format
+Try it out here: http://lewhunt.github.io/angularjs-custom-filters
 
-![Example](img/filtering-grab.gif)
+
